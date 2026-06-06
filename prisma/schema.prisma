@@ -1,0 +1,219 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum RecipeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+  DESSERT
+  DRINK
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  CHEF
+}
+
+model User {
+  id                  String          @id @default(uuid()) @db.Uuid
+  name                String
+  email               String          @unique
+  passwordHash        String          @map("password_hash")
+  avatarUrl           String?         @map("avatar_url")
+  bio                 String?         @db.Text
+  country             String?
+  dietaryPreferences  String[]        @map("dietary_preferences")
+  role                Role            @default(USER)
+  isVerified          Boolean         @default(false) @map("is_verified")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+
+  recipes             Recipe[]        @relation("UserRecipes")
+  reviews             Review[]
+  cookbooks           Cookbook[]
+  savedRecipes        SavedRecipe[]
+  browseHistory       BrowseHistory[]
+
+  @@map("users")
+}
+
+model Recipe {
+  id                 String          @id @default(uuid()) @db.Uuid
+  title              String
+  slug               String          @unique
+  description        String          @db.Text
+  originCountry      String          @map("origin_country")
+  cuisineType        String          @map("cuisine_type")
+  mealType           MealType        @map("meal_type")
+  difficulty         Difficulty
+  prepTimeMins       Int             @map("prep_time_mins")
+  cookTimeMins       Int             @map("cook_time_mins")
+  servings           Int
+  caloriesPerServing Int             @map("calories_per_serving")
+  coverImageUrl      String          @map("cover_image_url")
+  videoUrl           String?         @map("video_url")
+  youtubeSearchQuery String          @map("youtube_search_query")
+  status             RecipeStatus    @default(PENDING)
+  viewCount          Int             @default(0) @map("view_count")
+  saveCount          Int             @default(0) @map("save_count")
+  authorId           String          @db.Uuid @map("author_id")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+
+  author             User            @relation("UserRecipes", fields: [authorId], references: [id], onDelete: Cascade)
+  ingredients        Ingredient[]
+  instructions       Instruction[]
+  reviews            Review[]
+  tags               RecipeTag[]
+  cookbooks          CookbookRecipe[]
+  savedBy            SavedRecipe[]
+  browseHistory      BrowseHistory[]
+
+  @@map("recipes")
+}
+
+model Ingredient {
+  id         String   @id @default(uuid()) @db.Uuid
+  recipeId   String   @db.Uuid @map("recipe_id")
+  name       String
+  quantity   Float
+  unit       String
+  isOptional Boolean  @default(false) @map("is_optional")
+  sortOrder  Int      @map("sort_order")
+
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("ingredients")
+}
+
+model Instruction {
+  id          String   @id @default(uuid()) @db.Uuid
+  recipeId    String   @db.Uuid @map("recipe_id")
+  stepNumber  Int      @map("step_number")
+  description String   @db.Text
+  imageUrl    String?  @map("image_url")
+
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("instructions")
+}
+
+model Tag {
+  id       String      @id @default(uuid()) @db.Uuid
+  name     String      @unique
+  slug     String      @unique
+  category String      // e.g. dietary, method, occasion, equipment
+
+  recipes  RecipeTag[]
+
+  @@map("tags")
+}
+
+model RecipeTag {
+  recipeId String @db.Uuid @map("recipe_id")
+  tagId    String @db.Uuid @map("tag_id")
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, tagId])
+  @@map("recipe_tags")
+}
+
+model Review {
+  id        String   @id @default(uuid()) @db.Uuid
+  recipeId  String   @db.Uuid @map("recipe_id")
+  userId    String   @db.Uuid @map("user_id")
+  rating    Int      // 1 to 5 stars
+  comment   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Cookbook {
+  id             String           @id @default(uuid()) @db.Uuid
+  userId         String           @db.Uuid @map("user_id")
+  name           String
+  description    String?          @db.Text
+  coverImageUrl  String?          @map("cover_image_url")
+  isPublic       Boolean          @default(false) @map("is_public")
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipes        CookbookRecipe[]
+
+  @@map("cookbooks")
+}
+
+model CookbookRecipe {
+  cookbookId String   @db.Uuid @map("cookbook_id")
+  recipeId   String   @db.Uuid @map("recipe_id")
+  addedAt    DateTime @default(now()) @map("added_at")
+
+  cookbook   Cookbook @relation(fields: [cookbookId], references: [id], onDelete: Cascade)
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([cookbookId, recipeId])
+  @@map("cookbook_recipes")
+}
+
+model SavedRecipe {
+  userId  String   @db.Uuid @map("user_id")
+  recipeId String   @db.Uuid @map("recipe_id")
+  savedAt  DateTime @default(now()) @map("saved_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+  @@map("saved_recipes")
+}
+
+model BrowseHistory {
+  userId   String   @db.Uuid @map("user_id")
+  recipeId String   @db.Uuid @map("recipe_id")
+  viewedAt DateTime @default(now()) @map("viewed_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+  @@map("browse_history")
+}
+
+model Cuisine {
+  id          String @id @default(uuid()) @db.Uuid
+  name        String @unique
+  region      String // continent
+  country     String
+  flagEmoji   String @map("flag_emoji")
+  description String @db.Text
+
+  @@map("cuisines")
+}
