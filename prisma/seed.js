@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const prisma = new PrismaClient();
 
@@ -264,6 +271,318 @@ const unsplashFoodImages = [
 const dietaryTags = ["Vegan", "Vegetarian", "Gluten-Free", "Halal", "Kosher", "Jain", "Keto", "Dairy-Free", "Nut-Free"];
 const methodTags = ["Grill", "Bake", "Fry", "Steam", "Slow-Cook", "Raw", "Sauté"];
 
+const indianRecipes = [
+  {
+    title: "Butter Chicken (Murgh Makhani)",
+    mealType: "DINNER",
+    difficulty: "MEDIUM",
+    prepTimeMins: 20,
+    cookTimeMins: 30,
+    servings: 4,
+    caloriesPerServing: 480,
+    coverImageUrl: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80",
+    description: "A rich, creamy, and mildly spiced tomato sauce coating succulent chicken pieces. A classic North Indian restaurant favorite that is beloved globally.",
+    ingredients: [
+      { name: "Chicken thighs", quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Butter", quantity: 50.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Tomato Puree", quantity: 200.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Heavy Cream", quantity: 100.0, unit: "ml", isOptional: false, sortOrder: 4 },
+      { name: "Ginger-Garlic Paste", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
+      { name: "Garam Masala", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Chop the chicken thighs and marinate with ginger-garlic paste and chili powder." },
+      { stepNumber: 2, description: "Sear the chicken in a hot skillet with some oil until browned." },
+      { stepNumber: 3, description: "Sauté ginger-garlic paste, add tomato puree, and cook until the oil separates." },
+      { stepNumber: 4, description: "Stir in butter, heavy cream, garam masala, and add the seared chicken back to the gravy." },
+      { stepNumber: 5, description: "Simmer for 10-15 minutes. Serve hot garnished with cream and fresh coriander." }
+    ],
+    dietary: "Halal",
+    method: "Sauté"
+  },
+  {
+    title: "Paneer Tikka",
+    mealType: "LUNCH",
+    difficulty: "EASY",
+    prepTimeMins: 15,
+    cookTimeMins: 15,
+    servings: 3,
+    caloriesPerServing: 320,
+    coverImageUrl: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=800&q=80",
+    description: "Marinated cubes of paneer cottage cheese skewered with fresh bell peppers and onions, grilled to smoky perfection in a traditional style.",
+    ingredients: [
+      { name: "Paneer", quantity: 300.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Yogurt", quantity: 150.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Bell Peppers", quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Tandoori Masala", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "Lemon Juice", quantity: 1.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
+      { name: "Onion", quantity: 1.0, unit: "large", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Cut paneer, bell peppers, and onion into uniform 1-inch cubes." },
+      { stepNumber: 2, description: "Mix yogurt, tandoori masala, and lemon juice to form a smooth marinade." },
+      { stepNumber: 3, description: "Coat paneer cubes and vegetables in the marinade and let sit for 30 minutes." },
+      { stepNumber: 4, description: "Skewer the marinated paneer alternating with peppers and onion cubes." },
+      { stepNumber: 5, description: "Grill in a hot pan or oven at 200°C for 15 minutes, basting with oil until edges are charred." }
+    ],
+    dietary: "Vegetarian",
+    method: "Grill"
+  },
+  {
+    title: "Chicken Biryani",
+    mealType: "DINNER",
+    difficulty: "HARD",
+    prepTimeMins: 30,
+    cookTimeMins: 45,
+    servings: 6,
+    caloriesPerServing: 650,
+    coverImageUrl: "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=800&q=80",
+    description: "An aromatic, layers-of-flavor rice dish made with fragrant long-grain basmati rice, tender spiced chicken, saffron, and caramelized onions cooked on dum.",
+    ingredients: [
+      { name: "Basmati Rice", quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Chicken", quantity: 500.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Yogurt", quantity: 100.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Biryani Masala", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "Onions", quantity: 3.0, unit: "medium", isOptional: false, sortOrder: 5 },
+      { name: "Saffron Milk", quantity: 2.0, unit: "tbsp", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Wash and soak long-grain Basmati rice for 30 minutes." },
+      { stepNumber: 2, description: "Marinate the chicken in yogurt, biryani masala, ginger-garlic paste, and salt for 1 hour." },
+      { stepNumber: 3, description: "Fry sliced onions until deep golden-brown and crispy (birista)." },
+      { stepNumber: 4, description: "Parboil the rice in hot water with whole spices until 70% cooked, then drain." },
+      { stepNumber: 5, description: "Layer the spiced chicken, parboiled rice, fried onions, fresh mint, and saffron milk in a heavy-bottomed pot." },
+      { stepNumber: 6, description: "Seal the pot lid and cook on low heat (dum method) for 30-40 minutes." }
+    ],
+    dietary: "Halal",
+    method: "Slow-Cook"
+  },
+  {
+    title: "Masala Dosa",
+    mealType: "BREAKFAST",
+    difficulty: "MEDIUM",
+    prepTimeMins: 20,
+    cookTimeMins: 20,
+    servings: 4,
+    caloriesPerServing: 350,
+    coverImageUrl: "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80",
+    description: "A crisp, thin crepe made from fermented rice and lentil batter, filled with a savory, spiced potato mash and served with fresh coconut chutney.",
+    ingredients: [
+      { name: "Dosa Batter", quantity: 500.0, unit: "ml", isOptional: false, sortOrder: 1 },
+      { name: "Potatoes", quantity: 300.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Mustard Seeds", quantity: 1.0, unit: "tsp", isOptional: false, sortOrder: 3 },
+      { name: "Curry Leaves", quantity: 10.0, unit: "pieces", isOptional: false, sortOrder: 4 },
+      { name: "Turmeric Powder", quantity: 0.5, unit: "tsp", isOptional: false, sortOrder: 5 },
+      { name: "Ghee", quantity: 2.0, unit: "tbsp", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Boil, peel, and lightly mash the potatoes." },
+      { stepNumber: 2, description: "Heat oil, temper mustard seeds and curry leaves, then sauté sliced onions and green chilies." },
+      { stepNumber: 3, description: "Add turmeric powder, salt, mashed potatoes, and a splash of water. Mix and cook for 5 minutes." },
+      { stepNumber: 4, description: "Heat a flat griddle (tawa) and spread a ladle of dosa batter in thin concentric circles." },
+      { stepNumber: 5, description: "Drizzle ghee around the edges and cook on medium heat until golden-brown and crispy." },
+      { stepNumber: 6, description: "Place a portion of the potato filling in the center, fold the dosa, and serve hot." }
+    ],
+    dietary: "Vegetarian",
+    method: "Fry"
+  },
+  {
+    title: "Chole Bhature",
+    mealType: "LUNCH",
+    difficulty: "HARD",
+    prepTimeMins: 25,
+    cookTimeMins: 35,
+    servings: 4,
+    caloriesPerServing: 580,
+    coverImageUrl: "https://images.unsplash.com/photo-1626132647523-66f5bf380027?auto=format&fit=crop&w=800&q=80",
+    description: "Spicy, tangy chickpea curry served alongside puffed, golden-brown deep-fried leavened flatbread. A classic Punjabi street-food staple.",
+    ingredients: [
+      { name: "Chickpeas", quantity: 250.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "All-Purpose Flour", quantity: 300.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Chole Masala", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 3 },
+      { name: "Yogurt", quantity: 3.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "Onions", quantity: 2.0, unit: "medium", isOptional: false, sortOrder: 5 },
+      { name: "Tomatoes", quantity: 2.0, unit: "medium", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Soak chickpeas overnight and pressure cook with tea bags for a dark, rich color." },
+      { stepNumber: 2, description: "Sauté onions, ginger-garlic paste, and tomatoes until completely soft and oil releases." },
+      { stepNumber: 3, description: "Add chole masala, boiled chickpeas, and cook with chickpea stock until thick and flavorful." },
+      { stepNumber: 4, description: "Mix flour, yogurt, semolina, and a pinch of baking powder to knead a soft bhatura dough." },
+      { stepNumber: 5, description: "Roll dough into medium-sized oval discs and deep fry in hot oil until they puff up fully." }
+    ],
+    dietary: "Vegetarian",
+    method: "Fry"
+  },
+  {
+    title: "Samosa",
+    mealType: "SNACK",
+    difficulty: "MEDIUM",
+    prepTimeMins: 30,
+    cookTimeMins: 20,
+    servings: 5,
+    caloriesPerServing: 290,
+    coverImageUrl: "https://images.unsplash.com/photo-1601050690597-df056fb4ce78?auto=format&fit=crop&w=800&q=80",
+    description: "Crisp, flaky pastry pockets filled with a savory mixture of spiced potatoes, green peas, and fresh cilantro. Perfect with mint chutney.",
+    ingredients: [
+      { name: "All-Purpose Flour", quantity: 250.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Potatoes", quantity: 300.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Green Peas", quantity: 100.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Carom Seeds / Ajwain", quantity: 1.0, unit: "tsp", isOptional: false, sortOrder: 4 },
+      { name: "Garam Masala", quantity: 1.0, unit: "tsp", isOptional: false, sortOrder: 5 },
+      { name: "Oil for Deep Frying", quantity: 500.0, unit: "ml", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Knead a stiff pastry dough using flour, carom seeds, oil, salt, and water. Rest for 30 minutes." },
+      { stepNumber: 2, description: "Boil potatoes and mash them coarsely with boiled green peas and Indian spices." },
+      { stepNumber: 3, description: "Divide the rested dough into small balls and roll into thin oval sheets, then cut in half." },
+      { stepNumber: 4, description: "Fold each half-sheet into a cone shape, stuffing it with the potato-pea mixture." },
+      { stepNumber: 5, description: "Seal the edges using water and deep fry on low-medium heat until crisp and light golden-brown." }
+    ],
+    dietary: "Vegan",
+    method: "Fry"
+  },
+  {
+    title: "Palak Paneer",
+    mealType: "LUNCH",
+    difficulty: "EASY",
+    prepTimeMins: 15,
+    cookTimeMins: 20,
+    servings: 4,
+    caloriesPerServing: 280,
+    coverImageUrl: "https://images.unsplash.com/photo-1613292443284-8d10ef9383fe?auto=format&fit=crop&w=800&q=80",
+    description: "Cubes of fresh paneer cottage cheese simmered in a vibrant, spiced velvety smooth spinach puree. Healthy and delicious.",
+    ingredients: [
+      { name: "Spinach", quantity: 500.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Paneer", quantity: 250.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Garlic", quantity: 6.0, unit: "cloves", isOptional: false, sortOrder: 3 },
+      { name: "Green Chilies", quantity: 2.0, unit: "pieces", isOptional: false, sortOrder: 4 },
+      { name: "Ginger", quantity: 1.0, unit: "inch", isOptional: false, sortOrder: 5 },
+      { name: "Fresh Cream", quantity: 2.0, unit: "tbsp", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Blanch spinach leaves in boiling water for 2 minutes, then plunge into ice water to retain color." },
+      { stepNumber: 2, description: "Puree the blanched spinach with green chilies into a smooth paste." },
+      { stepNumber: 3, description: "Sauté finely chopped garlic, ginger, and onions in butter or oil until golden-brown." },
+      { stepNumber: 4, description: "Stir in the spinach puree, salt, and spices, simmer on low heat for 5 minutes." },
+      { stepNumber: 5, description: "Add paneer cubes and let simmer for 2-3 minutes. Swirl in fresh cream before serving." }
+    ],
+    dietary: "Vegetarian",
+    method: "Sauté"
+  },
+  {
+    title: "Gulab Jamun",
+    mealType: "DESSERT",
+    difficulty: "MEDIUM",
+    prepTimeMins: 15,
+    cookTimeMins: 20,
+    servings: 6,
+    caloriesPerServing: 320,
+    coverImageUrl: "https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=800&q=80",
+    description: "Soft, melt-in-your-mouth milk-solid dumplings deep-fried and soaked in a warm, fragrant rose and cardamom-scented sugar syrup.",
+    ingredients: [
+      { name: "Khoya / Milk Powder", quantity: 200.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Sugar", quantity: 300.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Cardamom Powder", quantity: 1.0, unit: "tsp", isOptional: false, sortOrder: 3 },
+      { name: "Rose Water", quantity: 1.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "All-Purpose Flour", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
+      { name: "Ghee for deep frying", quantity: 250.0, unit: "g", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Boil sugar with water, cardamom, and rose water for 10 minutes to make a light sticky syrup." },
+      { stepNumber: 2, description: "Mix milk powder, flour, and a splash of milk to form a soft, smooth dough without cracks." },
+      { stepNumber: 3, description: "Shape the dough into smooth, small balls (ensure no cracks are present)." },
+      { stepNumber: 4, description: "Deep fry the balls in hot ghee on very low heat, stirring constantly until dark golden-brown." },
+      { stepNumber: 5, description: "Drain and transfer them directly into the warm sugar syrup. Let soak for at least 1 hour." }
+    ],
+    dietary: "Vegetarian",
+    method: "Fry"
+  },
+  {
+    title: "Tandoori Chicken",
+    mealType: "DINNER",
+    difficulty: "MEDIUM",
+    prepTimeMins: 20,
+    cookTimeMins: 25,
+    servings: 4,
+    caloriesPerServing: 380,
+    coverImageUrl: "https://images.unsplash.com/photo-1610057099431-d73a1c9d2f2f?auto=format&fit=crop&w=800&q=80",
+    description: "Smoky tandoori chicken marinated in yogurt, lemon juice, and a blend of tandoori spices, then roasted to juicy perfection.",
+    ingredients: [
+      { name: "Chicken Drumsticks", quantity: 4.0, unit: "pieces", isOptional: false, sortOrder: 1 },
+      { name: "Yogurt", quantity: 100.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Kashmiri Red Chili", quantity: 1.0, unit: "tbsp", isOptional: false, sortOrder: 3 },
+      { name: "Lemon Juice", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "Ginger-Garlic Paste", quantity: 1.5, unit: "tbsp", isOptional: false, sortOrder: 5 },
+      { name: "Tandoori Masala", quantity: 1.0, unit: "tbsp", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Make deep diagonal cuts on the chicken drumsticks for the marinade to penetrate." },
+      { stepNumber: 2, description: "Perform a first marination with lemon juice, chili powder, and salt. Rest for 15 minutes." },
+      { stepNumber: 3, description: "Prepare the second marinade with thick yogurt, tandoori masala, and ginger-garlic paste." },
+      { stepNumber: 4, description: "Coat chicken thoroughly in the second marinade and refrigerate for at least 4 hours." },
+      { stepNumber: 5, description: "Roast in a preheated oven at 220°C or grill on a barbecue until tender and charred at the edges." }
+    ],
+    dietary: "Halal",
+    method: "Grill"
+  },
+  {
+    title: "Aloo Gobi",
+    mealType: "LUNCH",
+    difficulty: "EASY",
+    prepTimeMins: 10,
+    cookTimeMins: 20,
+    servings: 4,
+    caloriesPerServing: 180,
+    coverImageUrl: "https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=800&q=80",
+    description: "A classic dry Indian side dish combining tender potatoes and cauliflower florets sautéed with turmeric, ginger, cumin, and fresh cilantro.",
+    ingredients: [
+      { name: "Cauliflower", quantity: 1.0, unit: "head", isOptional: false, sortOrder: 1 },
+      { name: "Potatoes", quantity: 2.0, unit: "medium", isOptional: false, sortOrder: 2 },
+      { name: "Ginger", quantity: 1.0, unit: "tbsp", isOptional: false, sortOrder: 3 },
+      { name: "Cumin Seeds", quantity: 1.0, unit: "tsp", isOptional: false, sortOrder: 4 },
+      { name: "Turmeric Powder", quantity: 0.5, unit: "tsp", isOptional: false, sortOrder: 5 },
+      { name: "Green Chilies", quantity: 2.0, unit: "pieces", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Cut the cauliflower into medium florets and cube the potatoes." },
+      { stepNumber: 2, description: "Heat oil in a pan, add cumin seeds, chopped green chilies, and julienned ginger." },
+      { stepNumber: 3, description: "Add potato cubes, cauliflower florets, turmeric, chili powder, and salt. Stir well to coat." },
+      { stepNumber: 4, description: "Cover and cook on low heat for 15-20 minutes, stirring occasionally, until vegetables are tender." },
+      { stepNumber: 5, description: "Garnish with fresh chopped coriander leaves and a squeeze of fresh lemon juice." }
+    ],
+    dietary: "Vegan",
+    method: "Sauté"
+  },
+  {
+    title: "Mango Lassi",
+    mealType: "DRINK",
+    difficulty: "EASY",
+    prepTimeMins: 5,
+    cookTimeMins: 0,
+    servings: 2,
+    caloriesPerServing: 220,
+    coverImageUrl: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+    description: "A refreshing, sweet yogurt drink blended with ripe sweet mango pulp, milk, and flavored with a touch of cardamom powder.",
+    ingredients: [
+      { name: "Ripe Mango Pulp", quantity: 200.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Yogurt", quantity: 250.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Milk", quantity: 100.0, unit: "ml", isOptional: false, sortOrder: 3 },
+      { name: "Sugar", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+      { name: "Cardamom Powder", quantity: 0.25, unit: "tsp", isOptional: false, sortOrder: 5 },
+      { name: "Pistachios", quantity: 4.0, unit: "pieces", isOptional: true, sortOrder: 6 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Add mango pulp, fresh yogurt, cold milk, sugar, and cardamom powder to a blender." },
+      { stepNumber: 2, description: "Blend on high speed for 1-2 minutes until completely smooth and frothy." },
+      { stepNumber: 3, description: "Taste and adjust sugar if needed, or add ice cubes for a colder drink." },
+      { stepNumber: 4, description: "Pour into serving glasses and garnish with finely chopped pistachios and cardamom." }
+    ],
+    dietary: "Vegetarian",
+    method: "Raw"
+  }
+];
+
 async function main() {
   console.log("Starting seed script...");
 
@@ -390,48 +709,71 @@ async function main() {
       recipeCounter++;
       const author = users[recipeCounter % users.length];
 
-      // Pick a random dish name structure
-      const dishObj = dishNames[(recipeCounter + rIdx) % dishNames.length];
-      const adj = recipeAdjectives[(recipeCounter * rIdx) % recipeAdjectives.length];
-      const protein = proteins[(recipeCounter + rIdx) % proteins.length];
-      const title = `${adj} ${profile.country} ${protein} ${dishObj.name}`;
-
-      const slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${recipeCounter}`;
-      const prepTime = 10 + (recipeCounter % 4) * 5; // 10, 15, 20, 25 mins
-      const cookTime = 15 + (recipeCounter % 6) * 10; // 15, 25, 35, 45, 55, 65 mins
-      const difficulty = difficulties[recipeCounter % difficulties.length];
-      const servings = 2 + (recipeCounter % 6); // 2 to 8 servings
-      const calories = dishObj.calories + (recipeCounter % 15) * 10;
-      const status = recipeCounter < 15 ? "PENDING" : "APPROVED"; // Seed 15 pending recipes for approval queue
-
-      // Cover image
-      const coverUrl = unsplashFoodImages[recipeCounter % unsplashFoodImages.length] + `?auto=format&fit=crop&w=800&q=80&sig=${recipeCounter}`;
-
+      let title, slug, description, coverUrl, prepTime, cookTime, difficulty, servings, calories, status;
+      let mealTypeVal;
+      let ingredientsData = [];
+      let instructionsData = [];
+      let dietaryChoice;
+      let methodChoice;
       const flavorsString = profile.flavors.join(", ");
-      const description = `This ${title} is a delicious ${profile.cuisine} delicacy originating from ${profile.country}. Cooked with fine touches of ${flavorsString}, it brings absolute culinary warmth to your plate. Enjoy it hot with family and friends.`;
 
-      // Ingredients setup
-      const ingredientsData = [
-        { name: protein, quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
-        { name: profile.starch, quantity: 200.0, unit: "g", isOptional: false, sortOrder: 2 },
-        { name: veggies[recipeCounter % veggies.length], quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
-        { name: veggies[(recipeCounter + 1) % veggies.length], quantity: 1.0, unit: "cup", isOptional: true, sortOrder: 4 },
-        { name: profile.flavors[0], quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
-        { name: profile.flavors[1] || "Garlic", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 6 }
-      ];
+      if (profile.country === "India") {
+        const rData = indianRecipes[rIdx];
+        title = rData.title;
+        slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${recipeCounter}`;
+        description = rData.description;
+        coverUrl = rData.coverImageUrl;
+        prepTime = rData.prepTimeMins;
+        cookTime = rData.cookTimeMins;
+        difficulty = rData.difficulty;
+        servings = rData.servings;
+        calories = rData.caloriesPerServing;
+        status = "APPROVED"; // Make it approved so it's searchable
+        mealTypeVal = rData.mealType;
+        ingredientsData = rData.ingredients;
+        instructionsData = rData.instructions;
+        dietaryChoice = rData.dietary;
+        methodChoice = rData.method;
+      } else {
+        const dishObj = dishNames[(recipeCounter + rIdx) % dishNames.length];
+        const adj = recipeAdjectives[(recipeCounter * rIdx) % recipeAdjectives.length];
+        const protein = proteins[(recipeCounter + rIdx) % proteins.length];
+        title = `${adj} ${profile.country} ${protein} ${dishObj.name}`;
 
-      // Instructions setup
-      const instructionsData = [
-        { stepNumber: 1, description: `Prepare the main ingredients: chop the ${protein.toLowerCase()} and wash the ${veggies[recipeCounter % veggies.length].toLowerCase()}.` },
-        { stepNumber: 2, description: `Sauté the garlic, ginger, and base seasonings in a preheated pan using traditional ${profile.cuisine} methods.` },
-        { stepNumber: 3, description: `Add the ${protein.toLowerCase()} and cook thoroughly until tender and slightly golden brown.` },
-        { stepNumber: 4, description: `Stir in the ${profile.flavors[0].toLowerCase()} and simmer alongside ${veggies[(recipeCounter + 1) % veggies.length].toLowerCase()} for 10-15 minutes.` },
-        { stepNumber: 5, description: `Serve the steaming hot ${title} immediately over freshly prepared ${profile.starch}. Garnish with chopped herbs.` }
-      ];
+        slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${recipeCounter}`;
+        prepTime = 10 + (recipeCounter % 4) * 5; // 10, 15, 20, 25 mins
+        cookTime = 15 + (recipeCounter % 6) * 10; // 15, 25, 35, 45, 55, 65 mins
+        difficulty = difficulties[recipeCounter % difficulties.length];
+        servings = 2 + (recipeCounter % 6); // 2 to 8 servings
+        calories = dishObj.calories + (recipeCounter % 15) * 10;
+        status = recipeCounter < 15 ? "PENDING" : "APPROVED"; // Seed 15 pending recipes for approval queue
 
-      // Tags setup (link to 1 dietary and 1 method tag)
-      const dietaryChoice = dietaryTags[recipeCounter % dietaryTags.length];
-      const methodChoice = methodTags[recipeCounter % methodTags.length];
+        coverUrl = unsplashFoodImages[recipeCounter % unsplashFoodImages.length] + `?auto=format&fit=crop&w=800&q=80&sig=${recipeCounter}`;
+
+        description = `This ${title} is a delicious ${profile.cuisine} delicacy originating from ${profile.country}. Cooked with fine touches of ${flavorsString}, it brings absolute culinary warmth to your plate. Enjoy it hot with family and friends.`;
+
+        mealTypeVal = dishObj.mealType;
+
+        ingredientsData = [
+          { name: protein, quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
+          { name: profile.starch, quantity: 200.0, unit: "g", isOptional: false, sortOrder: 2 },
+          { name: veggies[recipeCounter % veggies.length], quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
+          { name: veggies[(recipeCounter + 1) % veggies.length], quantity: 1.0, unit: "cup", isOptional: true, sortOrder: 4 },
+          { name: profile.flavors[0], quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
+          { name: profile.flavors[1] || "Garlic", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 6 }
+        ];
+
+        instructionsData = [
+          { stepNumber: 1, description: `Prepare the main ingredients: chop the ${protein.toLowerCase()} and wash the ${veggies[recipeCounter % veggies.length].toLowerCase()}.` },
+          { stepNumber: 2, description: `Sauté the garlic, ginger, and base seasonings in a preheated pan using traditional ${profile.cuisine} methods.` },
+          { stepNumber: 3, description: `Add the ${protein.toLowerCase()} and cook thoroughly until tender and slightly golden brown.` },
+          { stepNumber: 4, description: `Stir in the ${profile.flavors[0].toLowerCase()} and simmer alongside ${veggies[(recipeCounter + 1) % veggies.length].toLowerCase()} for 10-15 minutes.` },
+          { stepNumber: 5, description: `Serve the steaming hot ${title} immediately over freshly prepared ${profile.starch}. Garnish with chopped herbs.` }
+        ];
+
+        dietaryChoice = dietaryTags[recipeCounter % dietaryTags.length];
+        methodChoice = methodTags[recipeCounter % methodTags.length];
+      }
 
       // We will perform the create in nested Prisma syntax.
       // Since we want to insert 2000+ items quickly, we can push them directly
@@ -441,7 +783,7 @@ async function main() {
         description,
         originCountry: profile.country,
         cuisineType: profile.cuisine,
-        mealType: dishObj.mealType,
+        mealType: mealTypeVal,
         difficulty,
         prepTimeMins: prepTime,
         cookTimeMins: cookTime,
