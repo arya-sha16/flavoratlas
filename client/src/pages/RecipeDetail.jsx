@@ -8,24 +8,6 @@ import { getFlagEmoji } from '../utils/flags.js';
 import RecipeCard from '../components/RecipeCard.jsx';
 import { RecipeDetailSkeleton } from '../components/SkeletonLoader.jsx';
 
-const Youtube = ({ size = 24, className = "", ...props }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-    {...props}
-  >
-    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
-    <path d="m10 15 5-3-5-3z" />
-  </svg>
-);
 
 export const RecipeDetail = () => {
   const { id } = useParams();
@@ -39,10 +21,8 @@ export const RecipeDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Video tutorial states
-  const [primaryVideo, setPrimaryVideo] = useState(null);
-  const [alternativeVideos, setAlternativeVideos] = useState([]);
-  const [loadingVideos, setLoadingVideos] = useState(true);
+  // Interactive instructions state
+  const [completedSteps, setCompletedSteps] = useState({});
 
   // Review states
   const [reviews, setReviews] = useState([]);
@@ -54,11 +34,10 @@ export const RecipeDetail = () => {
   // Related suggestions state
   const [related, setRelated] = useState([]);
 
-  // Load recipe data, video proxy matches, and related items
+  // Load recipe data and related items
   useEffect(() => {
     const loadRecipeDetails = async () => {
       setLoading(true);
-      setLoadingVideos(true);
       try {
         // Log browsing history if user is logged in
         if (user) {
@@ -74,11 +53,6 @@ export const RecipeDetail = () => {
         // Fetch related recipes
         const relatedRes = await api.get(`/recipes/${id}/related`);
         setRelated(relatedRes.data);
-
-        // Fetch videos
-        const videoRes = await api.get(`/videos/embed/${id}`);
-        setPrimaryVideo(videoRes.data.primaryVideo);
-        setAlternativeVideos(videoRes.data.alternatives || []);
       } catch (err) {
         console.error('Error loading recipe details:', err.message);
         if (err.response && err.response.status === 404) {
@@ -86,7 +60,6 @@ export const RecipeDetail = () => {
         }
       } finally {
         setLoading(false);
-        setLoadingVideos(false);
       }
     };
 
@@ -150,10 +123,7 @@ export const RecipeDetail = () => {
     return parseFloat(result.toFixed(2));
   };
 
-  // Safe YouTube embed URL generator
-  const getEmbedUrl = (videoId) => {
-    return `https://www.youtube.com/embed/${videoId}`;
-  };
+
 
   // Safe nutritional calculations (Mock values based on calories)
   const calories = Math.round((recipe.caloriesPerServing / recipe.servings) * servings);
@@ -310,99 +280,102 @@ export const RecipeDetail = () => {
             </div>
           </div>
 
-          {/* Step-by-Step Cooking Instructions */}
+          {/* Cooking Progress & Step-by-Step Instructions */}
           <div className="space-y-6">
             <h3 className="text-2xl font-bold font-display">Cooking Instructions</h3>
-            <div className="relative border-l-2 border-saffron/20 pl-6 ml-4 space-y-8">
-              {recipe.instructions?.map((step, idx) => (
-                <div key={step.id} className="relative group">
-                  
-                  {/* Number bubble */}
-                  <span className="absolute -left-[35px] top-0 flex h-6 w-6 items-center justify-center rounded-full bg-saffron text-[11px] font-black text-white ring-4 ring-cream dark:ring-charcoal">
-                    {step.stepNumber}
-                  </span>
-
-                  <div className="space-y-3">
-                    <p className="text-sm leading-relaxed text-charcoal-light dark:text-cream-dark">
-                      {step.description}
-                    </p>
-                    {step.imageUrl && (
-                      <div className="w-full max-w-md overflow-hidden rounded-2xl shadow-sm border border-cream-dark/20 dark:border-charcoal/30">
-                        <img
-                          src={step.imageUrl}
-                          alt={`Step ${step.stepNumber}`}
-                          className="w-full object-cover"
-                        />
-                      </div>
-                    )}
+            
+            {/* Progress bar */}
+            {recipe.instructions?.length > 0 && (() => {
+              const totalSteps = recipe.instructions.length;
+              const completedCount = Object.values(completedSteps).filter(Boolean).length;
+              const completionPercentage = Math.round((completedCount / totalSteps) * 100);
+              
+              return (
+                <div className="rounded-3xl bg-cream-light/40 dark:bg-charcoal-light/20 border border-cream-dark/15 dark:border-charcoal-light/5 p-4 md:p-6 space-y-3 shadow-sm">
+                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-gray-500">
+                    <span>Cooking Progress</span>
+                    <span className="text-saffron">{completionPercentage}% Completed ({completedCount} of {totalSteps} steps)</span>
+                  </div>
+                  <div className="w-full bg-cream-dark/30 dark:bg-charcoal-light/35 rounded-full h-2.5 overflow-hidden">
+                    <div 
+                      className="bg-saffron h-full rounded-full transition-all duration-500 ease-out"
+                      style={{ width: `${completionPercentage}%` }}
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              );
+            })()}
 
-          {/* YouTube Video Section */}
-          <div className="space-y-6 border-t border-cream-dark/20 dark:border-charcoal-light/10 pt-8">
-            <div className="flex items-center gap-2 text-red-600">
-              <Youtube size={24} className="fill-red-600 text-white" />
-              <h3 className="text-2xl font-bold font-display">Video Tutorials</h3>
-            </div>
+            {/* Interactive Step Cards */}
+            <div className="space-y-4">
+              {recipe.instructions?.map((step) => {
+                const isCompleted = !!completedSteps[step.id];
+                return (
+                  <div 
+                    key={step.id} 
+                    onClick={() => {
+                      setCompletedSteps(prev => ({ ...prev, [step.id]: !prev[step.id] }));
+                    }}
+                    className={`group relative flex gap-4 md:gap-6 rounded-3xl p-5 md:p-6 border transition-all duration-300 cursor-pointer select-none ${
+                      isCompleted 
+                        ? 'bg-cream-dark/5 dark:bg-charcoal-light/5 border-cream-dark/10 dark:border-charcoal-light/10 opacity-60' 
+                        : 'bg-cream-light dark:bg-charcoal-light border-cream-dark/15 dark:border-charcoal-light/5 hover:border-saffron/30 dark:hover:border-saffron/30 hover:shadow-md hover:scale-[1.01]'
+                    }`}
+                  >
+                    {/* Checkbox and Step Number */}
+                    <div className="flex flex-col items-center justify-start pt-1">
+                      <div className={`flex items-center justify-center h-6 w-6 rounded-full border-2 transition-all duration-300 ${
+                        isCompleted 
+                          ? 'bg-saffron border-saffron text-white' 
+                          : 'border-cream-dark dark:border-charcoal group-hover:border-saffron/75 text-transparent'
+                      }`}>
+                        {isCompleted ? (
+                          <svg className="h-3.5 w-3.5 stroke-white fill-none stroke-[3px]" viewBox="0 0 24 24">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : (
+                          <span className="text-[10px] font-black text-gray-400 group-hover:text-saffron/75">
+                            {step.stepNumber}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-            {loadingVideos ? (
-              <div className="h-64 rounded-3xl skeleton-loader" />
-            ) : primaryVideo ? (
-              <div className="space-y-6">
-                {/* Primary Embed Player */}
-                <div className="relative aspect-video w-full overflow-hidden rounded-3xl shadow-md border border-cream-dark/20 dark:border-charcoal/40 bg-black">
-                  <iframe
-                    src={getEmbedUrl(primaryVideo.videoId)}
-                    title={primaryVideo.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="absolute inset-0 h-full w-full border-0"
-                  />
-                </div>
-
-                {/* Alternatives Carousel */}
-                {alternativeVideos.length > 0 && (
-                  <div className="space-y-4">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">More Cooking Tutorials</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      {alternativeVideos.map(video => (
-                        <a
-                          key={video.videoId}
-                          href={`https://www.youtube.com/watch?v=${video.videoId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex flex-col rounded-2xl bg-cream-light dark:bg-charcoal-light border border-cream-dark/20 dark:border-charcoal-light/5 overflow-hidden shadow-sm hover:scale-[1.01] transition-transform"
-                        >
-                          <div className="relative aspect-video overflow-hidden">
-                            <img
-                              src={video.thumbnail}
-                              alt={video.title}
-                              className="h-full w-full object-cover"
-                            />
-                            <div className="absolute bottom-1 right-1 rounded bg-black/70 px-1 py-0.5 text-[10px] text-white">
-                              {video.duration}
-                            </div>
-                          </div>
-                          <div className="p-3 space-y-1">
-                            <h5 className="text-xs font-bold line-clamp-1 dark:text-cream-light">
-                              {video.title}
-                            </h5>
-                            <p className="text-[10px] text-gray-400">{video.channelName}</p>
-                          </div>
-                        </a>
-                      ))}
+                    {/* Step description */}
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className={`text-xs font-bold uppercase tracking-wider transition-colors ${
+                          isCompleted ? 'text-gray-400' : 'text-saffron'
+                        }`}>
+                          Step {step.stepNumber}
+                        </h4>
+                        {isCompleted && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-green-600 dark:text-green-500 bg-green-500/10 px-2.5 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-sm leading-relaxed transition-all duration-300 ${
+                        isCompleted 
+                          ? 'text-gray-400 line-through decoration-gray-400/40' 
+                          : 'text-charcoal-light dark:text-cream-dark'
+                      }`}>
+                        {step.description}
+                      </p>
+                      {step.imageUrl && (
+                        <div className="w-full max-w-md overflow-hidden rounded-2xl shadow-sm border border-cream-dark/20 dark:border-charcoal/30">
+                          <img
+                            src={step.imageUrl}
+                            alt={`Step ${step.stepNumber}`}
+                            className="w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="rounded-3xl border border-dashed border-cream-dark dark:border-charcoal-light p-6 text-center text-xs text-gray-500">
-                🎥 No video tutorials available for this recipe yet.
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
 
         </div>
