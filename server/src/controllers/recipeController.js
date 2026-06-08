@@ -26,51 +26,56 @@ export const listRecipes = async (req, res, next) => {
     const take = parseInt(limit);
 
     // Build query conditions
-    const where = { status: 'APPROVED' };
+    const where = {
+      status: 'APPROVED',
+      AND: []
+    };
 
     // Filter by Cuisine
     if (cuisine) {
-      where.cuisineType = { equals: cuisine, mode: 'insensitive' };
+      where.AND.push({ cuisineType: { equals: cuisine, mode: 'insensitive' } });
     }
 
     // Filter by Meal Type
     if (mealType) {
-      where.mealType = mealType.toUpperCase();
+      where.AND.push({ mealType: mealType.toUpperCase() });
     }
 
     // Filter by Difficulty
     if (difficulty) {
-      where.difficulty = difficulty.toUpperCase();
+      where.AND.push({ difficulty: difficulty.toUpperCase() });
     }
 
     // Filter by Cook Time
     if (cookTime) {
       if (cookTime === 'under_15') {
-        where.cookTimeMins = { lte: 15 };
+        where.AND.push({ cookTimeMins: { lte: 15 } });
       } else if (cookTime === '15_30') {
-        where.cookTimeMins = { gte: 15, lte: 30 };
+        where.AND.push({ cookTimeMins: { gte: 15, lte: 30 } });
       } else if (cookTime === '30_60') {
-        where.cookTimeMins = { gte: 30, lte: 60 };
+        where.AND.push({ cookTimeMins: { gte: 30, lte: 60 } });
       } else if (cookTime === '60_plus') {
-        where.cookTimeMins = { gte: 60 };
+        where.AND.push({ cookTimeMins: { gte: 60 } });
       }
     }
 
-    // Filter by Dietary Tags (Vegan, Vegetarian, etc.)
+    // Filter by Dietary Tags (Vegan, Vegetarian, etc.) - Match ALL selected tags (AND relation)
     if (dietary) {
       const dietaryArray = Array.isArray(dietary) 
         ? dietary 
         : dietary.split(',').map(d => d.trim());
       
-      if (dietaryArray.length > 0) {
-        where.tags = {
-          some: {
-            tag: {
-              name: { in: dietaryArray, mode: 'insensitive' }
+      dietaryArray.forEach(d => {
+        where.AND.push({
+          tags: {
+            some: {
+              tag: {
+                name: { equals: d, mode: 'insensitive' }
+              }
             }
           }
-        };
-      }
+        });
+      });
     }
 
     // Exclude Allergens / Ingredients
@@ -80,12 +85,18 @@ export const listRecipes = async (req, res, next) => {
         : excludeIngredients.split(',').map(i => i.trim());
 
       if (excludeArray.length > 0) {
-        where.ingredients = {
-          none: {
-            name: { in: excludeArray, mode: 'insensitive' }
+        where.AND.push({
+          ingredients: {
+            none: {
+              name: { in: excludeArray, mode: 'insensitive' }
+            }
           }
-        };
+        });
       }
+    }
+
+    if (where.AND.length === 0) {
+      delete where.AND;
     }
 
     // Sorting definition
@@ -159,28 +170,116 @@ export const listRecipes = async (req, res, next) => {
 
 export const searchRecipes = async (req, res, next) => {
   try {
-    const { q = '', page = 1, limit = 12 } = req.query;
+    const {
+      q = '',
+      page = 1,
+      limit = 12,
+      cuisine,
+      dietary,
+      mealType,
+      difficulty,
+      cookTime,
+      excludeIngredients,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const take = parseInt(limit);
 
     const where = {
       status: 'APPROVED',
-      OR: [
-        { title: { contains: q, mode: 'insensitive' } },
-        { description: { contains: q, mode: 'insensitive' } },
-        { originCountry: { contains: q, mode: 'insensitive' } },
-        { cuisineType: { contains: q, mode: 'insensitive' } },
+      AND: [
         {
-          tags: {
-            some: {
-              tag: {
-                name: { contains: q, mode: 'insensitive' }
+          OR: [
+            { title: { contains: q, mode: 'insensitive' } },
+            { description: { contains: q, mode: 'insensitive' } },
+            { originCountry: { contains: q, mode: 'insensitive' } },
+            { cuisineType: { contains: q, mode: 'insensitive' } },
+            {
+              tags: {
+                some: {
+                  tag: {
+                    name: { contains: q, mode: 'insensitive' }
+                  }
+                }
+              }
+            },
+            {
+              ingredients: {
+                some: {
+                  name: { contains: q, mode: 'insensitive' }
+                }
               }
             }
-          }
+          ]
         }
       ]
     };
+
+    // Filter by Cuisine
+    if (cuisine) {
+      where.AND.push({ cuisineType: { equals: cuisine, mode: 'insensitive' } });
+    }
+
+    // Filter by Meal Type
+    if (mealType) {
+      where.AND.push({ mealType: mealType.toUpperCase() });
+    }
+
+    // Filter by Difficulty
+    if (difficulty) {
+      where.AND.push({ difficulty: difficulty.toUpperCase() });
+    }
+
+    // Filter by Cook Time
+    if (cookTime) {
+      if (cookTime === 'under_15') {
+        where.AND.push({ cookTimeMins: { lte: 15 } });
+      } else if (cookTime === '15_30') {
+        where.AND.push({ cookTimeMins: { gte: 15, lte: 30 } });
+      } else if (cookTime === '30_60') {
+        where.AND.push({ cookTimeMins: { gte: 30, lte: 60 } });
+      } else if (cookTime === '60_plus') {
+        where.AND.push({ cookTimeMins: { gte: 60 } });
+      }
+    }
+
+    // Filter by Dietary Tags (Vegan, Vegetarian, etc.) - Match ALL selected tags (AND relation)
+    if (dietary) {
+      const dietaryArray = Array.isArray(dietary) 
+        ? dietary 
+        : dietary.split(',').map(d => d.trim());
+      
+      dietaryArray.forEach(d => {
+        where.AND.push({
+          tags: {
+            some: {
+              tag: {
+                name: { equals: d, mode: 'insensitive' }
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // Exclude Allergens / Ingredients
+    if (excludeIngredients) {
+      const excludeArray = Array.isArray(excludeIngredients)
+        ? excludeIngredients
+        : excludeIngredients.split(',').map(i => i.trim());
+
+      if (excludeArray.length > 0) {
+        where.AND.push({
+          ingredients: {
+            none: {
+              name: { in: excludeArray, mode: 'insensitive' }
+            }
+          }
+        });
+      }
+    }
 
     const [recipes, total] = await prisma.$transaction([
       prisma.recipe.findMany({
@@ -225,9 +324,9 @@ export const searchRecipes = async (req, res, next) => {
 
 export const getTrendingRecipes = async (req, res, next) => {
   try {
-    const recipes = await prisma.recipe.findMany({
+    const rawRecipes = await prisma.recipe.findMany({
       where: { status: 'APPROVED' },
-      take: 10,
+      take: 50,
       orderBy: [
         { viewCount: 'desc' },
         { saveCount: 'desc' }
@@ -239,7 +338,39 @@ export const getTrendingRecipes = async (req, res, next) => {
       }
     });
 
-    const formatted = recipes.map(r => {
+    const seenDishTypes = new Set();
+    const uniqueRecipes = [];
+
+    const getDishKey = (title) => {
+      const cleanTitle = title.replace(/\([^)]*\)/g, '').trim();
+      const words = cleanTitle.split(/\s+/);
+      return words[words.length - 1].toLowerCase();
+    };
+
+    for (const recipe of rawRecipes) {
+      const dishKey = getDishKey(recipe.title);
+      if (!seenDishTypes.has(dishKey)) {
+        seenDishTypes.add(dishKey);
+        uniqueRecipes.push(recipe);
+      }
+      if (uniqueRecipes.length >= 10) {
+        break;
+      }
+    }
+
+    // Fallback if we have fewer than 10 unique dish types
+    if (uniqueRecipes.length < 10) {
+      for (const recipe of rawRecipes) {
+        if (!uniqueRecipes.some(r => r.id === recipe.id)) {
+          uniqueRecipes.push(recipe);
+        }
+        if (uniqueRecipes.length >= 10) {
+          break;
+        }
+      }
+    }
+
+    const formatted = uniqueRecipes.map(r => {
       const avg = r.reviews.length > 0
         ? parseFloat((r.reviews.reduce((sum, rev) => sum + rev.rating, 0) / r.reviews.length).toFixed(1))
         : 0;

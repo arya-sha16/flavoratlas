@@ -4,6 +4,7 @@ import { Search as SearchIcon, Filter, RefreshCw, X, AlertCircle } from 'lucide-
 import api from '../services/api.js';
 import RecipeCard from '../components/RecipeCard.jsx';
 import { RecipeGridSkeleton } from '../components/SkeletonLoader.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 // Cuisines lists for selector dropdown
 const cuisines = [
@@ -25,11 +26,19 @@ const cookTimes = [
 
 export const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useAuth();
   
   // Search state
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [selectedCuisine, setSelectedCuisine] = useState(searchParams.get("cuisine") || "");
-  const [selectedDietaries, setSelectedDietaries] = useState(searchParams.get("dietary") ? searchParams.get("dietary").split(",") : []);
+  const [selectedDietaries, setSelectedDietaries] = useState(() => {
+    const urlDietary = searchParams.get("dietary");
+    if (urlDietary) return urlDietary.split(",");
+    if (user && user.dietaryPreferences && user.dietaryPreferences.length > 0) {
+      return user.dietaryPreferences;
+    }
+    return [];
+  });
   const [selectedMealType, setSelectedMealType] = useState(searchParams.get("mealType") || "");
   const [selectedDifficulty, setSelectedDifficulty] = useState(searchParams.get("difficulty") || "");
   const [selectedCookTime, setSelectedCookTime] = useState(searchParams.get("cookTime") || "");
@@ -53,14 +62,23 @@ export const Search = () => {
   useEffect(() => {
     setQ(searchParams.get("q") || "");
     setSelectedCuisine(searchParams.get("cuisine") || "");
-    setSelectedDietaries(searchParams.get("dietary") ? searchParams.get("dietary").split(",") : []);
+    
+    const urlDietary = searchParams.get("dietary");
+    if (urlDietary) {
+      setSelectedDietaries(urlDietary.split(","));
+    } else if (user && user.dietaryPreferences && user.dietaryPreferences.length > 0) {
+      setSelectedDietaries(user.dietaryPreferences);
+    } else {
+      setSelectedDietaries([]);
+    }
+
     setSelectedMealType(searchParams.get("mealType") || "");
     setSelectedDifficulty(searchParams.get("difficulty") || "");
     setSelectedCookTime(searchParams.get("cookTime") || "");
     setExcludedIngredients(searchParams.get("exclude") ? searchParams.get("exclude").split(",") : []);
     setSortBy(searchParams.get("sortBy") || "createdAt");
     setPage(parseInt(searchParams.get("page") || "1"));
-  }, [searchParams]);
+  }, [searchParams, user]);
 
   // Fetch data on parameters update
   useEffect(() => {

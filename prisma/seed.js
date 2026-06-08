@@ -268,6 +268,138 @@ const unsplashFoodImages = [
   "https://images.unsplash.com/photo-1506084868230-bb9d95c24759", // Oatmeal
 ];
 
+const dishImageMapping = {
+  "Stew": "https://images.unsplash.com/photo-1534939561126-855b8675edd7", // Beef stew
+  "Rice Bowl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c", // Bowl
+  "Soup": "https://images.unsplash.com/photo-1547592165-e1d17f97a15a", // Soup bowl
+  "Curry": "https://images.unsplash.com/photo-1565557623262-b51c2513a641", // Indian curry
+  "Skillet": "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0", // Breakfast skillet
+  "Salad": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd", // Salad
+  "Flatbread": "https://images.unsplash.com/photo-1513104890138-7c749659a591", // Flatbread
+  "Fritters": "https://images.unsplash.com/photo-1592417817098-8f3d6eb19675", // Fried fritters
+  "Stir-Fry": "https://images.unsplash.com/photo-1512058564366-18510be2db19", // Stir fry
+  "Porridge": "https://images.unsplash.com/photo-1517881917430-e70dfb3610aa", // Oatmeal
+  "Pancakes": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445", // Pancakes
+  "Pastry": "https://images.unsplash.com/photo-1608686207856-001b95cf60ca", // Pastry
+  "Pudding": "https://images.unsplash.com/photo-1551024506-0bccd828d307", // Chocolate pudding
+  "Herbal Infusion": "https://images.unsplash.com/photo-1576092768241-dec231879fc3", // Herbal tea infusion
+};
+
+const generalCuratedRecipes = [
+  {
+    title: "Classic Margherita Pizza",
+    mealType: "DINNER",
+    difficulty: "EASY",
+    prepTimeMins: 15,
+    cookTimeMins: 10,
+    servings: 2,
+    caloriesPerServing: 280,
+    coverImageUrl: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?auto=format&fit=crop&w=800&q=80",
+    description: "An authentic Italian pizza topped with fresh tomato sauce, creamy mozzarella cheese, fresh basil leaves, and a drizzle of olive oil.",
+    ingredients: [
+      { name: "Pizza Dough", quantity: 1.0, unit: "portion", isOptional: false, sortOrder: 1 },
+      { name: "Tomato Sauce", quantity: 0.5, unit: "cup", isOptional: false, sortOrder: 2 },
+      { name: "Fresh Mozzarella", quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Fresh Basil Leaves", quantity: 6.0, unit: "pieces", isOptional: false, sortOrder: 4 },
+      { name: "Extra Virgin Olive Oil", quantity: 1.0, unit: "tbsp", isOptional: true, sortOrder: 5 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Preheat your oven to the highest setting, ideally with a pizza stone inside." },
+      { stepNumber: 2, description: "Roll out the pizza dough on a floured surface to your desired thickness." },
+      { stepNumber: 3, description: "Spread a thin layer of tomato sauce over the dough, leaving a small border." },
+      { stepNumber: 4, description: "Tear fresh mozzarella cheese and distribute it evenly over the sauce." },
+      { stepNumber: 5, description: "Bake in the preheated oven for 8-10 minutes until the crust is golden and cheese is bubbly." },
+      { stepNumber: 6, description: "Garnish with fresh basil leaves and a drizzle of olive oil before slicing." }
+    ],
+    dietary: "Vegetarian",
+    method: "Bake"
+  },
+  {
+    title: "Gourmet Beef Burger",
+    mealType: "LUNCH",
+    difficulty: "EASY",
+    prepTimeMins: 10,
+    cookTimeMins: 10,
+    servings: 4,
+    caloriesPerServing: 520,
+    coverImageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+    description: "Juicy, grilled beef patties served in toasted brioche buns with melted cheddar cheese, crisp lettuce, fresh tomato slices, and custom burger sauce.",
+    ingredients: [
+      { name: "Ground Beef", quantity: 600.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Cheddar Cheese Slices", quantity: 4.0, unit: "pieces", isOptional: false, sortOrder: 2 },
+      { name: "Brioche Buns", quantity: 4.0, unit: "pieces", isOptional: false, sortOrder: 3 },
+      { name: "Lettuce", quantity: 4.0, unit: "leaves", isOptional: false, sortOrder: 4 },
+      { name: "Tomato", quantity: 1.0, unit: "large", isOptional: true, sortOrder: 5 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Divide the ground beef into four equal portions and shape them into patties." },
+      { stepNumber: 2, description: "Season both sides of the patties generously with salt and black pepper." },
+      { stepNumber: 3, description: "Grill the patties on a hot skillet or grill for 3-4 minutes per side." },
+      { stepNumber: 4, description: "Place a cheddar cheese slice on each patty during the last minute of cooking to melt." },
+      { stepNumber: 5, description: "Toast the split brioche buns lightly on the grill." },
+      { stepNumber: 6, description: "Assemble the burger with lettuce, tomato, the cheesy beef patty, and top bun." }
+    ],
+    dietary: "Halal",
+    method: "Grill"
+  },
+  {
+    title: "Traditional Chocolate Pudding",
+    mealType: "DESSERT",
+    difficulty: "EASY",
+    prepTimeMins: 10,
+    cookTimeMins: 10,
+    servings: 4,
+    caloriesPerServing: 240,
+    coverImageUrl: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=800&q=80",
+    description: "A rich, creamy, and smooth chocolate pudding cooked from scratch. A nostalgic dessert served chilled.",
+    ingredients: [
+      { name: "Sugar", quantity: 100.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Cocoa Powder", quantity: 30.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Cornstarch", quantity: 20.0, unit: "g", isOptional: false, sortOrder: 3 },
+      { name: "Milk", quantity: 500.0, unit: "ml", isOptional: false, sortOrder: 4 },
+      { name: "Butter", quantity: 30.0, unit: "g", isOptional: true, sortOrder: 5 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "In a saucepan, whisk together sugar, cocoa powder, cornstarch, and a pinch of salt." },
+      { stepNumber: 2, description: "Gradually whisk in the cold milk until completely smooth." },
+      { stepNumber: 3, description: "Bring to a simmer over medium heat, stirring constantly, until the mixture thickens." },
+      { stepNumber: 4, description: "Remove from heat, then stir in butter and vanilla extract until melted and combined." },
+      { stepNumber: 5, description: "Pour the pudding into serving cups and press plastic wrap directly onto the surface to prevent skin." },
+      { stepNumber: 6, description: "Refrigerate for at least 2 hours. Serve chilled." }
+    ],
+    dietary: "Vegetarian",
+    method: "Sauté"
+  },
+  {
+    title: "Classic Salmon Sushi Roll",
+    mealType: "LUNCH",
+    difficulty: "HARD",
+    prepTimeMins: 20,
+    cookTimeMins: 20,
+    servings: 3,
+    caloriesPerServing: 310,
+    coverImageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80",
+    description: "Traditional Japanese maki roll filled with seasoned sushi rice, fresh raw salmon, and crisp cucumber wrapped in toasted nori seaweed sheets.",
+    ingredients: [
+      { name: "Sushi Rice", quantity: 200.0, unit: "g", isOptional: false, sortOrder: 1 },
+      { name: "Fresh Salmon", quantity: 150.0, unit: "g", isOptional: false, sortOrder: 2 },
+      { name: "Nori Sheets", quantity: 3.0, unit: "pieces", isOptional: false, sortOrder: 3 },
+      { name: "Cucumber", quantity: 0.5, unit: "piece", isOptional: true, sortOrder: 4 },
+      { name: "Sushi Vinegar", quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 }
+    ],
+    instructions: [
+      { stepNumber: 1, description: "Wash and cook the sushi rice, then season it with sushi vinegar and let cool." },
+      { stepNumber: 2, description: "Slice the fresh salmon and cucumber into thin strips." },
+      { stepNumber: 3, description: "Place a nori sheet, shiny side down, on a bamboo rolling mat." },
+      { stepNumber: 4, description: "Spread a thin layer of cooled sushi rice over the nori, leaving a 1-inch border at the top." },
+      { stepNumber: 5, description: "Place salmon and cucumber strips horizontally across the center of the rice." },
+      { stepNumber: 6, description: "Roll the mat tightly from the bottom to form a neat cylinder, then slice into 8 pieces." }
+    ],
+    dietary: "Gluten-Free",
+    method: "Raw"
+  }
+];
+
 const dietaryTags = ["Vegan", "Vegetarian", "Gluten-Free", "Halal", "Kosher", "Jain", "Keto", "Dairy-Free", "Nut-Free"];
 const methodTags = ["Grill", "Bake", "Fry", "Steam", "Slow-Cook", "Raw", "Sauté"];
 
@@ -717,28 +849,81 @@ async function main() {
       let methodChoice;
       const flavorsString = profile.flavors.join(", ");
 
+      // Check for custom curated recipes
+      let curatedData = null;
       if (profile.country === "India") {
-        const rData = indianRecipes[rIdx];
-        title = rData.title;
+        curatedData = indianRecipes[rIdx];
+      } else if (profile.country === "Italy" && rIdx === 0) {
+        curatedData = generalCuratedRecipes[0]; // Pizza
+      } else if (profile.country === "United States" && rIdx === 0) {
+        curatedData = generalCuratedRecipes[1]; // Burger
+      } else if (profile.country === "France" && rIdx === 0) {
+        curatedData = generalCuratedRecipes[2]; // Pudding
+      } else if (profile.country === "Japan" && rIdx === 0) {
+        curatedData = generalCuratedRecipes[3]; // Sushi
+      }
+
+      if (curatedData) {
+        title = curatedData.title;
         slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${recipeCounter}`;
-        description = rData.description;
-        coverUrl = rData.coverImageUrl;
-        prepTime = rData.prepTimeMins;
-        cookTime = rData.cookTimeMins;
-        difficulty = rData.difficulty;
-        servings = rData.servings;
-        calories = rData.caloriesPerServing;
-        status = "APPROVED"; // Make it approved so it's searchable
-        mealTypeVal = rData.mealType;
-        ingredientsData = rData.ingredients;
-        instructionsData = rData.instructions;
-        dietaryChoice = rData.dietary;
-        methodChoice = rData.method;
+        description = curatedData.description;
+        coverUrl = curatedData.coverImageUrl;
+        prepTime = curatedData.prepTimeMins;
+        cookTime = curatedData.cookTimeMins;
+        difficulty = curatedData.difficulty;
+        servings = curatedData.servings;
+        calories = curatedData.caloriesPerServing;
+        status = "APPROVED";
+        mealTypeVal = curatedData.mealType;
+        ingredientsData = curatedData.ingredients;
+        instructionsData = curatedData.instructions;
+        dietaryChoice = curatedData.dietary;
+        methodChoice = curatedData.method;
       } else {
         const dishObj = dishNames[(recipeCounter + rIdx) % dishNames.length];
         const adj = recipeAdjectives[(recipeCounter * rIdx) % recipeAdjectives.length];
-        const protein = proteins[(recipeCounter + rIdx) % proteins.length];
-        title = `${adj} ${profile.country} ${protein} ${dishObj.name}`;
+        
+        // Avoid prepending protein to breakfast items, desserts, and drinks
+        const needsProtein = dishObj.mealType !== "DESSERT" && 
+                             dishObj.mealType !== "DRINK" && 
+                             dishObj.name !== "Pancakes" && 
+                             dishObj.name !== "Porridge";
+
+        if (needsProtein) {
+          const protein = proteins[(recipeCounter + rIdx) % proteins.length];
+          title = `${adj} ${profile.country} ${protein} ${dishObj.name}`;
+          ingredientsData = [
+            { name: protein, quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
+            { name: profile.starch, quantity: 200.0, unit: "g", isOptional: false, sortOrder: 2 },
+            { name: veggies[recipeCounter % veggies.length], quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
+            { name: veggies[(recipeCounter + 1) % veggies.length], quantity: 1.0, unit: "cup", isOptional: true, sortOrder: 4 },
+            { name: profile.flavors[0], quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
+            { name: profile.flavors[1] || "Garlic", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 6 }
+          ];
+          instructionsData = [
+            { stepNumber: 1, description: `Prepare the main ingredients: chop the ${protein.toLowerCase()} and wash the ${veggies[recipeCounter % veggies.length].toLowerCase()}.` },
+            { stepNumber: 2, description: `Sauté the garlic, ginger, and base seasonings in a preheated pan using traditional ${profile.cuisine} methods.` },
+            { stepNumber: 3, description: `Add the ${protein.toLowerCase()} and cook thoroughly until tender and slightly golden brown.` },
+            { stepNumber: 4, description: `Stir in the ${profile.flavors[0].toLowerCase()} and simmer alongside ${veggies[(recipeCounter + 1) % veggies.length].toLowerCase()} for 10-15 minutes.` },
+            { stepNumber: 5, description: `Serve the steaming hot ${title} immediately over freshly prepared ${profile.starch}. Garnish with chopped herbs.` }
+          ];
+        } else {
+          title = `${adj} ${profile.country} ${dishObj.name}`;
+          ingredientsData = [
+            { name: profile.starch, quantity: 200.0, unit: "g", isOptional: false, sortOrder: 1 },
+            { name: veggies[recipeCounter % veggies.length], quantity: 150.0, unit: "g", isOptional: false, sortOrder: 2 },
+            { name: veggies[(recipeCounter + 1) % veggies.length], quantity: 1.0, unit: "cup", isOptional: true, sortOrder: 3 },
+            { name: profile.flavors[0], quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 4 },
+            { name: profile.flavors[1] || "Garlic", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 5 }
+          ];
+          instructionsData = [
+            { stepNumber: 1, description: `Gather all ingredients and wash the fresh ${veggies[recipeCounter % veggies.length].toLowerCase()}.` },
+            { stepNumber: 2, description: `In a saucepan or bowl, blend the base components with traditional ${profile.cuisine} styling.` },
+            { stepNumber: 3, description: `Slowly simmer the mixture with a dash of ${profile.flavors[0].toLowerCase()} until rich and fragrant.` },
+            { stepNumber: 4, description: `Add the ${veggies[(recipeCounter + 1) % veggies.length].toLowerCase()} and continue cooking for 10 minutes.` },
+            { stepNumber: 5, description: `Serve the delicious ${title} immediately while warm, garnishing with fresh herbs.` }
+          ];
+        }
 
         slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${recipeCounter}`;
         prepTime = 10 + (recipeCounter % 4) * 5; // 10, 15, 20, 25 mins
@@ -748,31 +933,32 @@ async function main() {
         calories = dishObj.calories + (recipeCounter % 15) * 10;
         status = recipeCounter < 15 ? "PENDING" : "APPROVED"; // Seed 15 pending recipes for approval queue
 
-        coverUrl = unsplashFoodImages[recipeCounter % unsplashFoodImages.length] + `?auto=format&fit=crop&w=800&q=80&sig=${recipeCounter}`;
+        const baseImg = dishImageMapping[dishObj.name] || unsplashFoodImages[recipeCounter % unsplashFoodImages.length];
+        coverUrl = baseImg + `?auto=format&fit=crop&w=800&q=80&sig=${recipeCounter}`;
 
         description = `This ${title} is a delicious ${profile.cuisine} delicacy originating from ${profile.country}. Cooked with fine touches of ${flavorsString}, it brings absolute culinary warmth to your plate. Enjoy it hot with family and friends.`;
 
         mealTypeVal = dishObj.mealType;
-
-        ingredientsData = [
-          { name: protein, quantity: 400.0, unit: "g", isOptional: false, sortOrder: 1 },
-          { name: profile.starch, quantity: 200.0, unit: "g", isOptional: false, sortOrder: 2 },
-          { name: veggies[recipeCounter % veggies.length], quantity: 150.0, unit: "g", isOptional: false, sortOrder: 3 },
-          { name: veggies[(recipeCounter + 1) % veggies.length], quantity: 1.0, unit: "cup", isOptional: true, sortOrder: 4 },
-          { name: profile.flavors[0], quantity: 2.0, unit: "tbsp", isOptional: false, sortOrder: 5 },
-          { name: profile.flavors[1] || "Garlic", quantity: 1.0, unit: "tsp", isOptional: true, sortOrder: 6 }
-        ];
-
-        instructionsData = [
-          { stepNumber: 1, description: `Prepare the main ingredients: chop the ${protein.toLowerCase()} and wash the ${veggies[recipeCounter % veggies.length].toLowerCase()}.` },
-          { stepNumber: 2, description: `Sauté the garlic, ginger, and base seasonings in a preheated pan using traditional ${profile.cuisine} methods.` },
-          { stepNumber: 3, description: `Add the ${protein.toLowerCase()} and cook thoroughly until tender and slightly golden brown.` },
-          { stepNumber: 4, description: `Stir in the ${profile.flavors[0].toLowerCase()} and simmer alongside ${veggies[(recipeCounter + 1) % veggies.length].toLowerCase()} for 10-15 minutes.` },
-          { stepNumber: 5, description: `Serve the steaming hot ${title} immediately over freshly prepared ${profile.starch}. Garnish with chopped herbs.` }
-        ];
-
-        dietaryChoice = dietaryTags[recipeCounter % dietaryTags.length];
         methodChoice = methodTags[recipeCounter % methodTags.length];
+      }
+
+      let dietaryChoices = [];
+      if (curatedData) {
+        dietaryChoices = [curatedData.dietary];
+      } else {
+        const mainDiet = dietaryTags[recipeCounter % dietaryTags.length];
+        dietaryChoices = [mainDiet];
+        if (mainDiet === "Vegan") {
+          dietaryChoices.push("Vegetarian", "Dairy-Free");
+        } else if (mainDiet === "Vegetarian") {
+          if (recipeCounter % 2 === 0) dietaryChoices.push("Dairy-Free");
+        }
+        if (recipeCounter % 3 === 0 && !dietaryChoices.includes("Gluten-Free")) {
+          dietaryChoices.push("Gluten-Free");
+        }
+        if (recipeCounter % 5 === 0 && !dietaryChoices.includes("Nut-Free")) {
+          dietaryChoices.push("Nut-Free");
+        }
       }
 
       // We will perform the create in nested Prisma syntax.
@@ -793,14 +979,14 @@ async function main() {
         videoUrl: recipeCounter % 3 === 0 ? "https://www.youtube.com/watch?v=dQw4w9WgXcQ" : null,
         youtubeSearchQuery: `${title} ${profile.cuisine} recipe how to make`,
         status,
-        viewCount: 10 + (recipeCounter % 200),
-        saveCount: 2 + (recipeCounter % 50),
+        viewCount: Math.floor(Math.random() * 1000) + 10,
+        saveCount: Math.floor(Math.random() * 200) + 2,
         authorId: author.id,
         ingredients: { create: ingredientsData },
         instructions: { create: instructionsData },
         tags: {
           create: [
-            { tag: { connect: { name: dietaryChoice } } },
+            ...dietaryChoices.map(name => ({ tag: { connect: { name } } })),
             { tag: { connect: { name: methodChoice } } }
           ]
         },
