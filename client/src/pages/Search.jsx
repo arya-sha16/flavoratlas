@@ -30,6 +30,8 @@ export const Search = () => {
   
   // Search state
   const [q, setQ] = useState(searchParams.get("q") || "");
+  const [debouncedQ, setDebouncedQ] = useState(q);
+
   const [selectedCuisine, setSelectedCuisine] = useState(searchParams.get("cuisine") || "");
   const [selectedDietaries, setSelectedDietaries] = useState(() => {
     const urlDietary = searchParams.get("dietary");
@@ -58,9 +60,45 @@ export const Search = () => {
   const [loading, setLoading] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
+  // Helper to update URL parameters (hoisted function)
+  function updateURLParams(newParams) {
+    const updated = new URLSearchParams(searchParams);
+    
+    // Merge new parameters
+    Object.entries(newParams).forEach(([key, val]) => {
+      if (val === null || val === "" || (Array.isArray(val) && val.length === 0)) {
+        updated.delete(key);
+      } else {
+        updated.set(key, Array.isArray(val) ? val.join(",") : val);
+      }
+    });
+    
+    // Always reset page to 1 when changing search criteria
+    if (!newParams.page) {
+      updated.set("page", "1");
+    }
+
+    setSearchParams(updated);
+  }
+
+  // Debounce search query to prevent API spam on every keystroke
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQ(q);
+      const urlQ = searchParams.get("q") || "";
+      if (q !== urlQ) {
+        updateURLParams({ q });
+      }
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [q, searchParams]);
+
   // Sync initial URL params if they change
   useEffect(() => {
-    setQ(searchParams.get("q") || "");
+    const urlQ = searchParams.get("q") || "";
+    setQ(urlQ);
+    setDebouncedQ(urlQ);
     setSelectedCuisine(searchParams.get("cuisine") || "");
     
     const urlDietary = searchParams.get("dietary");
@@ -92,7 +130,7 @@ export const Search = () => {
           sortOrder: sortBy === 'createdAt' || sortBy === 'viewCount' ? 'desc' : 'asc'
         };
 
-        if (q) params.q = q;
+        if (debouncedQ) params.q = debouncedQ;
         if (selectedCuisine) params.cuisine = selectedCuisine;
         if (selectedMealType) params.mealType = selectedMealType;
         if (selectedDifficulty) params.difficulty = selectedDifficulty;
@@ -103,7 +141,7 @@ export const Search = () => {
         // Check region query (if continent clicked on WorldMap)
         const region = searchParams.get("region");
         let endpoint = '/recipes';
-        if (q) {
+        if (debouncedQ) {
           endpoint = '/recipes/search';
         } else if (region) {
           endpoint = `/recipes/by-region/${encodeURIComponent(region)}`;
@@ -129,27 +167,7 @@ export const Search = () => {
     };
 
     fetchRecipes();
-  }, [q, selectedCuisine, selectedDietaries, selectedMealType, selectedDifficulty, selectedCookTime, excludedIngredients, sortBy, page, searchParams]);
-
-  const updateURLParams = (newParams) => {
-    const updated = new URLSearchParams(searchParams);
-    
-    // Merge new parameters
-    Object.entries(newParams).forEach(([key, val]) => {
-      if (val === null || val === "" || (Array.isArray(val) && val.length === 0)) {
-        updated.delete(key);
-      } else {
-        updated.set(key, Array.isArray(val) ? val.join(",") : val);
-      }
-    });
-    
-    // Always reset page to 1 when changing search criteria
-    if (!newParams.page) {
-      updated.set("page", "1");
-    }
-
-    setSearchParams(updated);
-  };
+  }, [debouncedQ, selectedCuisine, selectedDietaries, selectedMealType, selectedDifficulty, selectedCookTime, excludedIngredients, sortBy, page, searchParams]);
 
   const handleDietaryToggle = (item) => {
     const next = selectedDietaries.includes(item)

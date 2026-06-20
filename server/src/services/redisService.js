@@ -23,7 +23,10 @@ try {
     isConnected = true;
   });
 
-  await client.connect();
+  client.connect().catch((error) => {
+    console.warn('⚠️ Could not connect to Redis. Falling back to in-memory cache:', error.message);
+    isConnected = false;
+  });
 } catch (error) {
   console.warn('⚠️ Could not connect to Redis. Falling back to in-memory cache:', error.message);
   isConnected = false;

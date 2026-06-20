@@ -62,7 +62,7 @@
   cursor: pointer;
 }
 
-.map-region:hover {
+.map-region:hover, .map-region.hovered {
   fill: theme('colors.saffron.DEFAULT');
   fill-opacity: 0.55;
   stroke-width: 2;

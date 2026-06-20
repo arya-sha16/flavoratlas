@@ -15,7 +15,53 @@ export const Home = () => {
   const [loadingTrending, setLoadingTrending] = useState(true);
   const [loadingSpotlight, setLoadingSpotlight] = useState(true);
   
+  // Explore All Recipes State
+  const [recipes, setRecipes] = useState([]);
+  const [loadingRecipes, setLoadingRecipes] = useState(true);
+  const [recipesPage, setRecipesPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  
   const navigate = useNavigate();
+
+  // Load initial recipes for Explore All Recipes grid
+  useEffect(() => {
+    const fetchInitialRecipes = async () => {
+      try {
+        const res = await api.get('/recipes', { params: { page: 1, limit: 8 } });
+        setRecipes(res.data.recipes || []);
+        if (res.data.meta) {
+          setHasMore(res.data.meta.page < res.data.meta.totalPages);
+        }
+      } catch (err) {
+        console.error('Error fetching recipes:', err.message);
+      } finally {
+        setLoadingRecipes(false);
+      }
+    };
+    fetchInitialRecipes();
+  }, []);
+
+  const loadMoreRecipes = async () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    const nextPage = recipesPage + 1;
+    try {
+      const res = await api.get('/recipes', { params: { page: nextPage, limit: 8 } });
+      const newRecipes = res.data.recipes || [];
+      setRecipes((prev) => [...prev, ...newRecipes]);
+      setRecipesPage(nextPage);
+      if (res.data.meta) {
+        setHasMore(res.data.meta.page < res.data.meta.totalPages);
+      } else {
+        setHasMore(newRecipes.length > 0);
+      }
+    } catch (err) {
+      console.error('Error fetching more recipes:', err.message);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   // Load Trending and Spotlight recipes
   useEffect(() => {
@@ -273,6 +319,54 @@ export const Home = () => {
               </div>
             </div>
 
+          </div>
+        )}
+      </section>
+
+      {/* 5. EXPLORE ALL RECIPES GRID */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold font-display text-charcoal dark:text-cream-light">
+              Explore All Recipes
+            </h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Browse our complete collection of international culinary dishes.
+            </p>
+          </div>
+          <button 
+            onClick={() => navigate('/search')} 
+            className="text-xs font-bold text-saffron hover:underline flex items-center gap-1"
+          >
+            Advanced Filters <ArrowRight size={14} />
+          </button>
+        </div>
+
+        {loadingRecipes && recipes.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <RecipeCardSkeleton key={idx} />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {recipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={loadMoreRecipes}
+                  disabled={loadingMore}
+                  className="rounded-full bg-saffron hover:bg-saffron/90 px-8 py-3 text-xs font-bold text-white shadow hover:scale-[1.02] active:scale-95 transition-transform flex items-center gap-2"
+                >
+                  {loadingMore ? 'Loading...' : 'Load More Recipes'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </section>
