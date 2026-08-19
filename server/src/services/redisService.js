@@ -11,10 +11,25 @@ let isConnected = false;
 const fallbackCache = new Map();
 
 try {
-  client = createClient({ url: redisUrl });
+  client = createClient({
+    url: redisUrl,
+    socket: {
+      reconnectStrategy: (retries) => {
+        if (retries > 1) {
+          return new Error('Redis connection retry limit reached');
+        }
+        return 500;
+      },
+      connectTimeout: 2000
+    }
+  });
 
+  let errorLogged = false;
   client.on('error', (err) => {
-    console.warn('⚠️ Redis Client Error:', err.message);
+    if (!errorLogged) {
+      console.warn('ℹ️ Redis offline, using high-performance in-memory cache.');
+      errorLogged = true;
+    }
     isConnected = false;
   });
 
@@ -23,12 +38,10 @@ try {
     isConnected = true;
   });
 
-  client.connect().catch((error) => {
-    console.warn('⚠️ Could not connect to Redis. Falling back to in-memory cache:', error.message);
+  client.connect().catch(() => {
     isConnected = false;
   });
 } catch (error) {
-  console.warn('⚠️ Could not connect to Redis. Falling back to in-memory cache:', error.message);
   isConnected = false;
 }
 

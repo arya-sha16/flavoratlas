@@ -10,6 +10,7 @@ import * as recipeController from '../controllers/recipeController.js';
 import * as reviewController from '../controllers/reviewController.js';
 import * as videoController from '../controllers/videoController.js';
 import * as adminController from '../controllers/adminController.js';
+import * as foodApiController from '../controllers/foodApiController.js';
 import { upload, cloudinaryService } from '../services/cloudinaryService.js';
 
 const router = express.Router();
@@ -94,5 +95,13 @@ router.get('/admin/users', authMiddleware, roleMiddleware(['ADMIN']), adminContr
 router.patch('/admin/users/:id/ban', authMiddleware, roleMiddleware(['ADMIN']), adminController.banUser);
 router.patch('/admin/users/:id/promote', authMiddleware, roleMiddleware(['ADMIN']), adminController.promoteUser);
 router.get('/admin/analytics', authMiddleware, roleMiddleware(['ADMIN', 'MODERATOR']), adminController.getAnalytics);
+
+// ----------------------------------------------------
+// EXTERNAL GLOBAL FOOD API ROUTES (/api/external-food)
+// ----------------------------------------------------
+router.get('/external-food/search', foodApiController.searchGlobalDishes);
+router.get('/external-food/by-country/:country', foodApiController.getDishesByCountry);
+router.get('/external-food/areas', foodApiController.getGlobalAreas);
+router.post('/external-food/ai-generate', foodApiController.generateRecipeWithAI);
 
 export default router;
